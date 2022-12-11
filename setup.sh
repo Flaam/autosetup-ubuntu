@@ -146,8 +146,8 @@ apt install unattended-upgrades -y &> /dev/null
 echo "🛠️ Configuring automatic reboots for automatic security updates..."
 apt install apt-config-auto-update -y &> /dev/null
 
-systemctl enable unattended-upgrades -y &> /dev/null
-systemctl stop unattended-upgrades -y &> /dev/null
+systemctl enable unattended-upgrades &> /dev/null
+systemctl stop unattended-upgrades &> /dev/null
 
 read -p "📩 Enter an email address for updates errors notifications: " "user_email"
 
@@ -159,7 +159,7 @@ sed -i "s/Unattended-Upgrade\:\:Automatic-Reboot-WithUsers.*/Unattended-Upgrade\
 sed -i "s/Unattended-Upgrade\:\:Automatic-Reboot-Time.*/Unattended-Upgrade\:\:Automatic-Reboot-Time \"04:00\"\;/g" /etc/apt/apt.conf.d/50unattended-upgrades
 sed -i "s/Unattended-Upgrade\:\:SyslogEnable.*/Unattended-Upgrade\:\:SyslogEnable \"true\"\;/g" /etc/apt/apt.conf.d/50unattended-upgrades
 
-systemctl start unattended-upgrades -y &> /dev/null
+systemctl start unattended-upgrades &> /dev/null
 
 # -------------------------------------------------------------------------------------------
 echo "🔧 Configuring Log Rotation..."
