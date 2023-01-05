@@ -73,7 +73,7 @@ PubkeyAuthentication yes
 PasswordAuthentication no
 PermitEmptyPasswords no
 
-PermitRootLogin no
+PermitRootLogin yes
 MaxAuthTries 3
 
 X11Forwarding no
