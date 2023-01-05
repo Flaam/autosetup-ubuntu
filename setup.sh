@@ -59,18 +59,6 @@ sed -i "s/\:\/usr\/local\/games//g" /etc/environment | \
 sed -i "s/\:\/usr\/games//g" /etc/environment
 
 # -------------------------------------------------------------------------------------------
-echo "👤 Creating SSH user..."
-# SudoUser creation
-
-read -p "👤 Enter an username (SSH): " "sudo_user"
-read -s -p "🔐 Enter a password (SSH): " "user_password"
-echo ""
-
-crypted_password=$(mkpasswd --method=SHA-512 --stdin $user_password)
-
-useradd -m -p "${crypted_password}" -G "sudo" -s "/bin/bash" $sudo_user &> /dev/null
-
-# -------------------------------------------------------------------------------------------
 echo ""
 echo "⬇️ Installing, configurating and restarting the SSH server..."
 # Installing, configurating and restarting the SSH server
@@ -81,56 +69,17 @@ cat <<EOF > /etc/ssh/sshd_config
 Protocol 2
 
 PubkeyAuthentication yes
-AuthorizedKeysFile .ssh/authorized_keys
 
 PasswordAuthentication no
 PermitEmptyPasswords no
 
 PermitRootLogin no
-AllowUsers $sudo_user
 MaxAuthTries 3
 
 X11Forwarding no
 
 Include /etc/ssh/sshd_config.d/*.conf
 EOF
-
-# -------------------------------------------------------------------------------------------
-echo "🛠️ Creating and configurating SSH access through private key..."
-# Generate SSH key and grant permissions to all important SSH directories and add public key to authorized keys
-
-mkdir -p /etc/skel/.ssh
-mkdir -p /home/$sudo_user/.ssh
-
-unset confirm
-until grep -qiE "^(y|n|yes|no)$"<<<$confirm; do read -p "❓ Do you want to use an existing key? (Y/N): " confirm; done
-if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]
-then
-    read -p "🗝️ Enter your public key: " public_key
-    echo $public_key > /etc/skel/.ssh/authorized_keys
-    echo $public_key > /root/.ssh/authorized_keys
-    echo $public_key > /home/$sudo_user/.ssh/authorized_keys
-elif [[ $confirm == [nN] || $confirm == [nN][oO] ]]
-then
-    key_passphrase=$(read -p "🔐 Enter a passphrase for your SSH private key: ")
-    ssh_key=$(ssh-keygen -t ed25519 -N $key_passphrase -f /root/.ssh/id_ed25519)
-    public_key=$(cat /root/.ssh/id_ed25519.pub)
-
-    cp /root/.ssh/id_ed25519.pub /etc/skel/.ssh/authorized_keys
-    cp /root/.ssh/id_ed25519.pub /root/.ssh/authorized_keys
-    cp /root/.ssh/id_ed25519.pub /home/$sudo_user/.ssh/authorized_keys
-else
-    echo "⚠️ Something went wrong, the installation will stop..."
-fi
-
-chown -R root:root /etc/skel
-chown -R $sudo_user:$sudo_user /home/$sudo_user
-
-chmod 700 /etc/skel/.ssh
-chmod 600 /etc/skel/.ssh/authorized_keys
-
-chmod 700 /home/$sudo_user/.ssh
-chmod 600 /home/$sudo_user/.ssh/authorized_keys
 
 # -------------------------------------------------------------------------------------------
 echo "🔄 Restarting the SSH server..."
