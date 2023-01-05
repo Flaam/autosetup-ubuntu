@@ -78,7 +78,6 @@ MaxAuthTries 3
 
 X11Forwarding no
 
-Include /etc/ssh/sshd_config.d/*.conf
 EOF
 
 # -------------------------------------------------------------------------------------------
