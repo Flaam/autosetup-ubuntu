@@ -59,28 +59,6 @@ sed -i "s/\:\/usr\/local\/games//g" /etc/environment | \
 sed -i "s/\:\/usr\/games//g" /etc/environment
 
 # -------------------------------------------------------------------------------------------
-echo ""
-echo "⬇️ Installing, configurating and restarting the SSH server..."
-# Installing, configurating and restarting the SSH server
-
-apt install openssh-server &> /dev/null
-
-cat <<EOF > /etc/ssh/sshd_config
-Protocol 2
-
-PubkeyAuthentication yes
-
-PasswordAuthentication no
-PermitEmptyPasswords no
-
-PermitRootLogin yes
-MaxAuthTries 3
-
-X11Forwarding no
-
-EOF
-
-# -------------------------------------------------------------------------------------------
 echo "🔄 Restarting the SSH server..."
 # Restarting the SSH server
 
